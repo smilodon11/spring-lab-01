@@ -28,4 +28,4 @@ public class HelloController {
 
     public record Info(String owner, String javaVersion, int cpuCores) { }
 }
-
+// Lab 01 REST Controller
