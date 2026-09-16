@@ -1,0 +1,34 @@
+package kz.iitu.springlab.scope;
+
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
+
+@Component
+public class TicketOffice {
+
+    private final Ticket direct;                    // Внедряется ОДИН раз
+    private final ObjectProvider<Ticket> provider;  // Источник свежих бинов
+
+    TicketOffice(Ticket direct, ObjectProvider<Ticket> provider) {
+        this.direct = direct;
+        this.provider = provider;
+    }
+
+    public Map<String, Object> demo() {
+        String direct1 = direct.id();
+        String direct2 = direct.id();
+
+        // При каждом .getObject() создается новый prototype-бин
+        String fresh1 = provider.getObject().id();
+        String fresh2 = provider.getObject().id();
+
+        return Map.of(
+                "injectedDirectly", List.of(direct1, direct2),
+                "viaProvider",      List.of(fresh1, fresh2),
+                "office",           System.identityHashCode(this)
+        );
+    }
+}
