@@ -1,6 +1,7 @@
 package kz.iitu.springlab.service;
 
 import kz.iitu.springlab.audit.Audited;
+import kz.iitu.springlab.audit.RequiresRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,7 @@ public class CatalogService {
 
     @Autowired
     @Lazy
-    private CatalogService self; // @Lazy обязателен, чтобы избежать циклической зависимости (circular dependency)
+    private CatalogService self; // @Lazy обязателен для избежания circular dependency
 
     public String findById(long id) {
         sleep(50);
@@ -29,6 +30,7 @@ public class CatalogService {
     }
 
     @Audited(action = "CATALOG_REMOVE")
+    @RequiresRole("ADMIN") // <-- ВОТ ЭТА АННОТАЦИЯ ВКЛЮЧАЕТ ПРОВЕРКУ РОЛИ!
     public String remove(long id) {
         if (id <= 0) {
             throw new IllegalArgumentException("Invalid identifier: " + id);
@@ -38,9 +40,8 @@ public class CatalogService {
 
     @Audited(action = "CATALOG_REMOVE_TWICE")
     public String removeTwice(long id) {
-        // Вызываем методы через self (CGLIB-прокси) вместо this!
-        String first  = remove(id);
-        String second = remove(id + 1);
+        String first  = self.remove(id);
+        String second = self.remove(id + 1);
         return first + "; " + second;
     }
 

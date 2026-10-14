@@ -1,6 +1,6 @@
 package kz.iitu.springlab.aspect;
 
-import kz.iitu.springlab.audit.Audited;
+import kz.iitu.springlab.audit.Audited; // <-- ДОБАВЛЕН ИМПОРТ
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.*;
@@ -28,7 +28,7 @@ public class AuditAspect {
             return result;
         } catch (Throwable ex) {
             log.warn("[AUDIT] {} failure at {}: {}", audited.action(), LocalDateTime.now(), ex.getMessage());
-            throw ex;                           // исключение нельзя "проглатывать"
+            throw ex; // исключение нельзя "проглатывать"
         }
     }
 }
